@@ -48,51 +48,60 @@ Frac parse_factor(const std::string& s, int& pos, int end) {
     }
     
     // Handle numbers and variables
+    int coeff = 1;
     if (std::isdigit(s[pos]) || s[pos] == '+' || s[pos] == '-') {
-        int coeff = get_number(s, pos, end);
-        
-        // Check for x, sin, cos
-        if (pos < end && s[pos] == 'x') {
+        coeff = get_number(s, pos, end);
+    }
+    
+    // Parse a complete term (which may include x, sin, cos components)
+    int x_exp = 0, sin_exp = 0, cos_exp = 0;
+    bool has_component = false;
+    
+    while (pos < end) {
+        if (s[pos] == 'x') {
             pos++;  // consume 'x'
-            int exp = 1;
+            x_exp = 1;
             if (pos < end && s[pos] == '^') {
                 pos++;  // consume '^'
-                exp = get_number(s, pos, end);
+                x_exp = get_number(s, pos, end);
             }
-            return Frac(Term(coeff, exp, 0, 0));
-        } 
-        else if (pos < end && s[pos] == 's' && pos + 2 < end && s.substr(pos, 3) == "sin") {
+            has_component = true;
+        }
+        else if (pos + 2 < end && s.substr(pos, 3) == "sin") {
             pos += 3;  // consume 'sin'
-            int exp = 1;
+            sin_exp = 1;
             if (pos < end && s[pos] == '^') {
                 pos++;  // consume '^'
-                exp = get_number(s, pos, end);
+                sin_exp = get_number(s, pos, end);
             }
             if (pos < end && s[pos] == 'x') {
                 pos++;  // consume 'x'
             }
-            return Frac(Term(coeff, 0, exp, 0));
-        } 
-        else if (pos < end && s[pos] == 'c' && pos + 2 < end && s.substr(pos, 3) == "cos") {
+            has_component = true;
+        }
+        else if (pos + 2 < end && s.substr(pos, 3) == "cos") {
             pos += 3;  // consume 'cos'
-            int exp = 1;
+            cos_exp = 1;
             if (pos < end && s[pos] == '^') {
                 pos++;  // consume '^'
-                exp = get_number(s, pos, end);
+                cos_exp = get_number(s, pos, end);
             }
             if (pos < end && s[pos] == 'x') {
                 pos++;  // consume 'x'
             }
-            return Frac(Term(coeff, 0, 0, exp));
-        } 
+            has_component = true;
+        }
         else {
-            // Just a constant
-            return Frac(coeff);
+            break;  // No more components
         }
     }
     
-    // Default case
-    return Frac(0);
+    // If no component was found, it's just a constant
+    if (!has_component) {
+        return Frac(coeff);
+    }
+    
+    return Frac(Term(coeff, x_exp, sin_exp, cos_exp));
 }
 
 Frac parse_term(const std::string& s, int& pos, int end) {
