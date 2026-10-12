@@ -106,15 +106,13 @@ std::string Frac::output() const {
             }
         }
         
-        // Handle sin^c x
+            // Handle sin^c x
         if (term.c > 0) {
             p_str += "sin";
             if (term.c > 1) {
                 p_str += "^" + std::to_string(term.c);
             }
-            if (term.b > 0 || term.d > 0) {
-                p_str += "x";  // Only add x if there are other terms
-            }
+            p_str += "x";  // Always add x after sin function
         }
         
         // Handle cos^d x
@@ -123,21 +121,19 @@ std::string Frac::output() const {
             if (term.d > 1) {
                 p_str += "^" + std::to_string(term.d);
             }
-            if (term.b > 0 || term.c > 0) {
-                p_str += "x";  // Only add x if there are other terms
-            }
+            p_str += "x";  // Always add x after cos function
         }
         
         // Special case: constant term
         if (term.b == 0 && term.c == 0 && term.d == 0) {
-            if (i == 0 && term.a < 0) {
-                p_str += std::to_string(-term.a);
-            } else if (i == 0) {
+            if (i == 0) {
                 p_str += std::to_string(term.a);
-            } else if (term.a < 0) {
-                p_str += std::to_string(-term.a);
             } else {
-                p_str += std::to_string(term.a);
+                if (term.a < 0) {
+                    p_str += std::to_string(-term.a);
+                } else {
+                    p_str += std::to_string(term.a);
+                }
             }
         }
     }
@@ -192,9 +188,7 @@ std::string Frac::output() const {
             if (term.c > 1) {
                 q_str += "^" + std::to_string(term.c);
             }
-            if (term.b > 0 || term.d > 0) {
-                q_str += "x";  // Only add x if there are other terms
-            }
+            q_str += "x";  // Always add x after sin function
         }
         
         // Handle cos^d x
@@ -203,21 +197,19 @@ std::string Frac::output() const {
             if (term.d > 1) {
                 q_str += "^" + std::to_string(term.d);
             }
-            if (term.b > 0 || term.c > 0) {
-                q_str += "x";  // Only add x if there are other terms
-            }
+            q_str += "x";  // Always add x after cos function
         }
         
         // Special case: constant term
         if (term.b == 0 && term.c == 0 && term.d == 0) {
-            if (i == 0 && term.a < 0) {
-                q_str += std::to_string(-term.a);
-            } else if (i == 0) {
+            if (i == 0) {
                 q_str += std::to_string(term.a);
-            } else if (term.a < 0) {
-                q_str += std::to_string(-term.a);
             } else {
-                q_str += std::to_string(term.a);
+                if (term.a < 0) {
+                    q_str += std::to_string(-term.a);
+                } else {
+                    q_str += std::to_string(term.a);
+                }
             }
         }
     }
