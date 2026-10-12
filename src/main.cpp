@@ -1,7 +1,9 @@
 #include <iostream>
 #include <string>
 #include "../include/frac.h"
-#include "parser.cpp"  // Include parser implementation
+
+// Forward declarations for parser functions
+Frac parse(const std::string& s);
 
 int main() {
     std::string expr;
